@@ -13,7 +13,7 @@ from collections import namedtuple
 from dataclasses import dataclass, replace
 from enum import Enum
 from fileinput import filename
-from lib2to3.fixes.fix_input import context
+# from lib2to3.fixes.fix_input import context
 from logging import getLogger
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple, Union, cast
 
