@@ -1033,8 +1033,9 @@ class EditorNotebook(CustomNotebook):
 
     def _cmd_goto_source_line(self):
         editor = self.get_current_editor()
+        last_line = int(editor.get_code_view().text.index(tk.END).split(".")[0]) - 1
         if editor:
-            line_no = simpledialog.askinteger(tr("Go to line"), tr("Line number"))
+            line_no = simpledialog.askinteger(tr("Go to line"), tr(f"Enter a line number between 1 and {str(last_line)}"))
             if line_no:
                 editor.select_line(line_no)
 

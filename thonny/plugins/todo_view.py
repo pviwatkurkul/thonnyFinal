@@ -17,8 +17,8 @@ class TodoView(ui_utils.TreeFrame):
         ui_utils.TreeFrame.__init__(
             self,
             master,
-            columns=("line_no", "todo_text"),
-            displaycolumns=(0, 1),
+            columns=("line_no", "type", "todo_text"),
+            displaycolumns=(0, 1, 2),
         )
 
         self._current_code_view = None
@@ -38,9 +38,11 @@ class TodoView(ui_utils.TreeFrame):
         get_workbench().bind_class("EditorCodeViewText", "<<TextChange>>", self._text_change, True)
 
         self.tree.column("line_no", width=ems_to_pixels(4), anchor=tk.W)
+        self.tree.column("type", width=ems_to_pixels(4), anchor=tk.W)
         self.tree.column("todo_text", width=ems_to_pixels(100), anchor=tk.W)
 
         self.tree.heading("line_no", text=tr("Line"), anchor=tk.W)
+        self.tree.heading("type", text=tr("Type"), anchor=tk.W)
         self.tree.heading("todo_text", text=tr("Info"), anchor=tk.W)
 
         self.tree["show"] = ["headings"]
@@ -112,13 +114,18 @@ class TodoView(ui_utils.TreeFrame):
             matches = r_match.finditer(line)
             if matches:
                 for m in matches:
-                    todo_text = m.groups()[0]
-                    self.tree.insert("", "end", values=(line_no, todo_text))
+                    if(m.groups()[0].split(":")):
+                        todo_text = m.groups()[0].split(":")[1]
+                    else:
+                        todo_text = m.groups()[0]
+                    type_val = m.groups()[0].split(":")[0]
+                    formatted_type_val = type_val[1:].lower()
+                    self.tree.insert("", "end", values=(line_no,formatted_type_val, todo_text))
 
         if len(self.tree.get_children()) == 0:
             # todo enhance the regex so that a todo within quotes is not shown in the list
             # low prio
-            self.tree.insert("", "end", values=(INFO_TEXT, tr("No line marked with #todo found")))
+            self.tree.insert("", "end", values=(INFO_TEXT, "", tr("No line marked with #todo found")))
 
     def clear(self):
         self.tree.delete(*self.tree.get_children())
